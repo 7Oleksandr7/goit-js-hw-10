@@ -1,67 +1,49 @@
 import Notiflix from 'notiflix';
 Notiflix.Notify.init({
-  position: 'center-top',
-  opacity: 0.8,
-  timeout: 2500,
+  position: 'right-top',
+  opacity: 0.9,
+  timeout: 5000,
   clickToClose: true,
 });
 
-const form = document.querySelector('.form');
-const submitBtn = document.querySelector('.form button');
+const submitBtn = document.querySelector('button');
+const delay = document.querySelector('[name="delay"]');
+const step = document.querySelector('[name="step"]');
+const amount = document.querySelector('[name="amount"]');
 
-form.addEventListener('submit', runPromises);
-
-function runPromises(e) {
-  e.preventDefault();
-
-  const {
-    elements: { delay, step, amount },
-  } = e.currentTarget;
-
-  let promiseDelay = +delay.value;
-
-  for (let i = 1; i <= +amount.value; i += 1) {
-    createPromise(i, promiseDelay).then(onFullFilled).catch(onRejected);
-    promiseDelay += +step.value;
-  }
-}
+submitBtn.addEventListener('click', onSubmit);
 
 function createPromise(position, delay) {
-  const promise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
-
-    const obj = {
-      position,
-      delay,
-    };
-
     setTimeout(() => {
       if (shouldResolve) {
-        // Fulfill
-        resolve(obj);
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
       }
-      // Reject
-      reject(obj);
     }, delay);
   });
-  return promise;
 }
-
-// function createPromise(position, delay) {
-//   const shouldResolve = Math.random() > 0.3;
-//   if (shouldResolve) {
-//     // Fulfill
-//   } else {
-//     // Reject
-//   }
-// }
-
-function onFullFilled({ position, delay }) {
-  Notiflix.Notify.success(`Fulfilled promise ${position} in ${delay}ms`);
-  console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-}
-
-function onRejected({ position, delay }) {
-  Notiflix.Notify.failure(`Rejected promise ${position} in ${delay}ms`);
-  console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+function onSubmit(e) {
+  e.preventDefault();
+  let delayInput = +delay.value;
+  let stepInput = +step.value;
+  let amountInput = +amount.value;
+  for (let position = 1; position <= amountInput; position += 1) {
+    createPromise(position, delayInput)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`
+        );
+        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`
+        );
+        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
+    delayInput += stepInput;
+  }
 }
