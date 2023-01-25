@@ -22,7 +22,6 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
-      startTimerBtn.setAttribute('disabled', true);
       Notify.failure('Please choose a date in the future');
       return;
     }
