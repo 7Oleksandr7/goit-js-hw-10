@@ -33,6 +33,9 @@ const options = {
         const { days, hours, minutes, seconds } = timerTime;
         if (days + hours + minutes + seconds === 0) {
           clearInterval(timerId);
+          setTimeout(() => {
+            document.location.reload();
+          }, 3000);
         }
         timeDays.textContent = addLeadingZero(days);
         timeHours.textContent = addLeadingZero(hours);
