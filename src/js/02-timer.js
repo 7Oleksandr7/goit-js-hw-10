@@ -4,16 +4,16 @@ import flatpickr from 'flatpickr';
 // Додатковий імпорт стилів
 import 'flatpickr/dist/flatpickr.min.css';
 
-const datetimeEl = document.querySelector('#datetime-picker');
-const startBtnEl = document.querySelector('button[data-start]');
-const spanDaysEl = document.querySelector('span[data-days]');
-const spanHoursEl = document.querySelector('span[data-hours]');
-const spanMinutesEl = document.querySelector('span[data-minutes]');
-const spanSecondsEl = document.querySelector('span[data-seconds]');
+const timeInput = document.querySelector('#datetime-picker');
+const startTimerBtn = document.querySelector('button[data-start]');
+const timeDays = document.querySelector('span[data-days]');
+const timeHours = document.querySelector('span[data-hours]');
+const timeMinutes = document.querySelector('span[data-minutes]');
+const timeSeconds = document.querySelector('span[data-seconds]');
 
 let timerId = null;
 
-startBtnEl.setAttribute('disabled', true);
+startTimerBtn.setAttribute('disabled', true);
 
 const options = {
   enableTime: true,
@@ -21,29 +21,29 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    if (selectedDates[0] - new Date() < 0) {
-      startBtnEl.setAttribute('disabled', true);
+    if (selectedDates[0] < new Date()) {
+      startTimerBtn.setAttribute('disabled', true);
       Notify.failure('Please choose a date in the future');
       return;
     }
-    startBtnEl.removeAttribute('disabled');
-    startBtnEl.addEventListener('click', () => {
+    startTimerBtn.removeAttribute('disabled');
+    startTimerBtn.addEventListener('click', () => {
       timerId = setInterval(() => {
         const timerTime = convertMs(selectedDates[0] - new Date());
         const { days, hours, minutes, seconds } = timerTime;
         if (days + hours + minutes + seconds === 0) {
           clearInterval(timerId);
         }
-        spanDaysEl.textContent = addLeadingZero(days);
-        spanHoursEl.textContent = addLeadingZero(hours);
-        spanMinutesEl.textContent = addLeadingZero(minutes);
-        spanSecondsEl.textContent = addLeadingZero(seconds);
+        timeDays.textContent = addLeadingZero(days);
+        timeHours.textContent = addLeadingZero(hours);
+        timeMinutes.textContent = addLeadingZero(minutes);
+        timeSeconds.textContent = addLeadingZero(seconds);
       }, 1000);
     });
   },
 };
 
-flatpickr(datetimeEl, options);
+flatpickr(timeInput, options);
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
